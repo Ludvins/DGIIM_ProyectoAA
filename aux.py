@@ -112,7 +112,7 @@ def show_confusion_matrix(y_real, y_pred):
     plt.show()
 
 
-def show_preprocess_correlation_matrix(data, preprocess, title=None):
+def show_preprocess_correlation_matrix(data, prep_data, title=None):
     """Muestra matriz de correlación para datos antes y después del preprocesado."""
     print("Matriz de correlación pre y post procesado (dígitos)")
 
@@ -122,7 +122,6 @@ def show_preprocess_correlation_matrix(data, preprocess, title=None):
     im = axs[0].matshow(corr_matrix, cmap="cividis")
     axs[0].title.set_text("Sin preprocesado")
 
-    prep_data = preprocess.fit_transform(data)
     corr_matrix_post = np.abs(np.corrcoef(prep_data.T))
     axs[1].matshow(corr_matrix_post, cmap="cividis")
     axs[1].title.set_text("Con preprocesado")
