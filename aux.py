@@ -51,6 +51,7 @@ from sklearn.metrics import (
     mean_absolute_error,
     accuracy_score,
     plot_roc_curve,
+    make_scorer
 )
 from sklearn.model_selection import (
     train_test_split,
@@ -84,22 +85,22 @@ def plot_digit(point):
     plt.show()
 
 
-def show_confusion_matrix(y_real, y_pred):
-    """Muestra matriz de confusión de la base de datos de dígitos."""
+def show_confusion_matrix(y_real, y_pred, n):
+    """Muestra matriz de confusión."""
     mat = confusion_matrix(y_real, y_pred)
     mat = 100 * mat.astype("float64") / mat.sum(axis=1)[:, np.newaxis]
     fig, ax = plt.subplots()
     ax.matshow(mat, cmap="Purples")
     ax.set(
         title="Matriz de confusión",
-        xticks=np.arange(10),
-        yticks=np.arange(10),
+        xticks=np.arange(n),
+        yticks=np.arange(n),
         xlabel="Etiqueta real",
         ylabel="Etiqueta predicha",
     )
 
-    for i in range(10):
-        for j in range(10):
+    for i in range(n):
+        for j in range(n):
             ax.text(
                 j,
                 i,
@@ -315,7 +316,7 @@ def kfold_models(models, X, y, seed, scorer, stratified=True, verbose=True):
             print("--> {} <--".format(name))
 
         # Calcula la media de los valores obtenidos en la validación cruzada.
-        score = np.mean(cross_val_score(model, X, y, cv=kfold, n_jobs=-1))
+        score = np.mean(cross_val_score(model, X, y, scoring=scorer, cv=kfold, n_jobs=-1))
 
         # Almacena el mejor resultado
         if best_score < score:
