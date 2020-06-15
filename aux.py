@@ -93,11 +93,11 @@ def show_confusion_matrix(y_real, y_pred, n):
     ax.matshow(mat, cmap="Purples")
     ax.set(
         title="Matriz de confusión",
-        xticks=np.arange(n),
-        yticks=np.arange(n),
         xlabel="Etiqueta real",
         ylabel="Etiqueta predicha",
     )
+    ax.set_xticklabels(np.arange(n+1))
+    ax.set_yticklabels(np.arange(n+1))
 
     for i in range(n):
         for j in range(n):
