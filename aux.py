@@ -51,7 +51,7 @@ from sklearn.metrics import (
     mean_absolute_error,
     accuracy_score,
     plot_roc_curve,
-    make_scorer
+    make_scorer,
 )
 from sklearn.model_selection import (
     train_test_split,
@@ -61,28 +61,19 @@ from sklearn.model_selection import (
     cross_val_score,
     learning_curve,
 )
-import numpy as np
 
 from sklearn.datasets import make_classification
 
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, classification_report, matthews_corrcoef
+from sklearn import preprocessing
+from sklearn.utils import resample
+from imblearn.ensemble import BalancedBaggingClassifier, BalancedRandomForestClassifier
+from imblearn.metrics import geometric_mean_score as gms
+from sklearn.neural_network import MLPClassifier
 
-###########################################
-######### FUNCIONES AUXILIARES  ###########
-###########################################
-
-
-def plot_digit(point):
-    """Muestra un punto de la base de datos de dígitos."""
-    b = point.reshape((8, 8))
-    fig, ax = plt.subplots()
-    ax.matshow(b, cmap=plt.cm.Blues)
-
-    for i in range(8):
-        for j in range(8):
-            c = b[j, i]
-            ax.text(i, j, str(c), va="center", ha="center")
-
-    plt.show()
+pd.options.display.max_columns = 100
 
 
 def show_confusion_matrix(y_real, y_pred, n):
@@ -92,12 +83,10 @@ def show_confusion_matrix(y_real, y_pred, n):
     fig, ax = plt.subplots()
     ax.matshow(mat, cmap="Purples")
     ax.set(
-        title="Matriz de confusión",
-        xlabel="Etiqueta real",
-        ylabel="Etiqueta predicha",
+        title="Matriz de confusión", xlabel="Etiqueta real", ylabel="Etiqueta predicha",
     )
-    ax.set_xticklabels(np.arange(n+1))
-    ax.set_yticklabels(np.arange(n+1))
+    ax.set_xticklabels(np.arange(n + 1))
+    ax.set_yticklabels(np.arange(n + 1))
 
     for i in range(n):
         for j in range(n):
@@ -131,47 +120,6 @@ def show_preprocess_correlation_matrix(data, prep_data, title=None):
         fig.suptitle(title)
     fig.colorbar(im, ax=axs.ravel().tolist(), shrink=0.6)
     plt.show()
-
-
-def scatter(x, y, title=None):
-    """Representa conjunto de puntos 2D clasificados.
-    Argumentos posicionales:
-    - x: Coordenadas 2D de los puntos
-    - y: Etiquetas"""
-
-    _, ax = plt.subplots()
-
-    # Establece límites
-    xmin, xmax = np.min(x[:, 0]), np.max(x[:, 0])
-    ax.set_xlim(xmin - 1, xmax + 1)
-    ax.set_ylim(np.min(x[:, 1]) - 1, np.max(x[:, 1]) + 1)
-
-    # Pinta puntos
-    ax.scatter(x[:, 0], x[:, 1], c=y, cmap="tab10", alpha=0.8)
-
-    # Pinta etiquetas
-    labels = np.unique(y)
-    for label in labels:
-        centroid = np.mean(x[y == label], axis=0)
-        ax.annotate(
-            int(label),
-            centroid,
-            size=14,
-            weight="bold",
-            color="white",
-            backgroundcolor="black",
-        )
-
-    # Muestra título
-    if title is not None:
-        plt.title(title)
-    plt.show()
-
-
-def scatter_with_TSNE(X, y, data_preprocess):
-    prep_data = data_preprocess.fit_transform(X)
-    X_new = TSNE(n_components=2).fit_transform(prep_data)
-    scatter(X_new, y)
 
 
 def feature_importance(X, y, n=15, regression=False):
@@ -276,11 +224,6 @@ def plot_learning_curve(
     return plt
 
 
-################################################################
-###################### FUNCION K-FOLD #########################
-################################################################
-
-
 def kfold_models(models, X, y, seed, scorer, stratified=True, verbose=True):
     """
     Realiza validación cruzada con el método K-fold a todos los modelos
@@ -317,7 +260,9 @@ def kfold_models(models, X, y, seed, scorer, stratified=True, verbose=True):
             print("--> {} <--".format(name))
 
         # Calcula la media de los valores obtenidos en la validación cruzada.
-        score = np.mean(cross_val_score(model, X, y, scoring=scorer, cv=kfold, n_jobs=-1))
+        score = np.mean(
+            cross_val_score(model, X, y, scoring=scorer, cv=kfold, n_jobs=-1)
+        )
 
         # Almacena el mejor resultado
         if best_score < score:
