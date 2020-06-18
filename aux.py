@@ -75,6 +75,10 @@ from sklearn.neural_network import MLPClassifier
 
 pd.options.display.max_columns = 100
 
+#######################################################
+#################### FUNCIONES ########################
+#######################################################
+
 
 def show_confusion_matrix(y_real, y_pred, n):
     """Muestra matriz de confusión."""
@@ -119,29 +123,6 @@ def show_preprocess_correlation_matrix(data, prep_data, title=None):
     if title is not None:
         fig.suptitle(title)
     fig.colorbar(im, ax=axs.ravel().tolist(), shrink=0.6)
-    plt.show()
-
-
-def feature_importance(X, y, n=15, regression=False):
-    # Build a forest and compute the impurity-based feature importances
-    if regression:
-        forest = ExtraTreesRegressor(n_estimators=250, random_state=0)
-    else:
-        forest = ExtraTreesClassifier(n_estimators=250, random_state=0)
-
-    forest.fit(X, y)
-    importances = forest.feature_importances_
-    std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
-    indices = np.argsort(importances)[-n:][::-1]
-
-    # Plot the impurity-based feature importances of the forest
-    plt.figure()
-    plt.title("Importancia de las características")
-    plt.bar(
-        range(n), importances[indices], color="b", yerr=std[indices], align="center",
-    )
-    plt.xticks(range(n), indices)
-    plt.xlim([-1, n])
     plt.show()
 
 
