@@ -1,5 +1,7 @@
 # Ajuste de modelos de clasificación en la base de datos  [Forest Covertype](https://archive.ics.uci.edu/ml/datasets/covertype)
 
+Realizado con [@pabloac31](https://github.com/pabloac31)
+
 El objetivo es obtener modelos que sean capaces de predecir el tipo de cubierta forestal de una determinada región a partir de sus datos cartográficos. La base de datos proporciona estas observaciones, extraídas de cuatro zonas silvestres situadas en el Bosque Nacional Roosevelt, al norte de Colorado, junto con la cubierta forestal correspondiente. En estas zonas la acción del hombre es mínima, por lo que el tipo de cubierta forestal existente es resultado de procesos naturales.
 
 Estamos, por tanto, frente a un problema de **aprendizaje supervisado**, en concreto de **clasificación multiclase**, donde la variable dependiente e toma valores en el rango 1,...,7. Cada uno de los valores codifica un tipo de cubierta forestal distinta. 
